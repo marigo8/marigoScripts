@@ -6,7 +6,11 @@ public class FloatData : ScriptableObject
 {
     public float value;
 
-    public UnityEvent updateValueEvent, zeroEvent;
+    public FloatData max;
+    
+    public bool stopAtZero;
+
+    public UnityEvent updateValueEvent, zeroEvent, maxEvent;
 
     public void AddToValue(float amount)
     {
@@ -37,7 +41,17 @@ public class FloatData : ScriptableObject
         updateValueEvent.Invoke();
         if (value <= 0f)
         {
+            if (stopAtZero) value = 0f;
             zeroEvent.Invoke();
+        }
+
+        if (max != null)
+        {
+            if (value > max.value)
+            {
+                value = max.value;
+                maxEvent.Invoke();
+            }
         }
     }
 }

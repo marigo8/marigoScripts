@@ -6,7 +6,11 @@ public class IntData : ScriptableObject
 {
     public int value;
 
-    public UnityEvent updateValueEvent, zeroEvent;
+    public IntData max;
+
+    public bool stopAtZero;
+
+    public UnityEvent updateValueEvent, zeroEvent, maxEvent;
 
     public void AddToValue(int amount)
     {
@@ -32,12 +36,28 @@ public class IntData : ScriptableObject
         OnUpdateValue();
     }
 
+    public void SetValueToMax()
+    {
+        if (max == null) return;
+        SetValue(max);
+    }
+
     private void OnUpdateValue()
     {
         updateValueEvent.Invoke();
         if (value <= 0)
         {
             zeroEvent.Invoke();
+            if (stopAtZero) value = 0;
+        }
+
+        if (max != null)
+        {
+            if (value > max.value)
+            {
+                value = max.value;
+                maxEvent.Invoke();
+            }
         }
     }
 }
